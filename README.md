@@ -19,7 +19,7 @@ result = (
     .then(transform)
     .then(store)
     .catch(handle_error)
-    .finally(cleanup)
+    .finally_fn(cleanup)
 )
 
 # Event emitter
@@ -32,7 +32,8 @@ def welcome_user(user_id, email):
 
 ## Features
 
-- **Promise-like chaining** — `.then()` / `.catch()` / `.finally()`
+- **Promise-like chaining** — `.then()` / `.catch()` / `.finally_fn()`
+  (named `finally_fn` because `finally` is a reserved keyword in Python)
 - **Async support** — Full `async`/`await`, auto-detected
 - **Event emitter** — Register/emit/unregister events
 - **Once handlers** — `on(...).once()` or `@once` decorator
@@ -60,7 +61,7 @@ result = (
     .then(lambda user: enrich(user, include_orders=True))
     .then(lambda user: render_email(user))
     .catch(lambda err: log.error(err))
-    .finally(lambda: close_db())
+    .finally_fn(lambda: close_db())
 )
 
 # Async chain (auto-detected)
@@ -80,7 +81,7 @@ results = (
         lambda: fetch_products(),
         lambda: fetch_orders(),
     ])
-    .then(lambda (users, products, orders): combine(users, products, orders))
+    .then(lambda result: combine(*result))
 )
 ```
 
@@ -146,7 +147,7 @@ cb = Callback(coro)          # returns awaitable
 |--------|-------------|
 | `.then(fn)` | Chain success handler, returns new Callback |
 | `.catch(fn)` | Chain error handler, returns new Callback |
-| `.finally(fn)` | Chain cleanup handler (always runs) |
+| `.finally_fn(fn)` | Chain cleanup handler (always runs). Named `finally_fn` because `finally` is a reserved keyword in Python |
 | `.map(fn)` | Transform result, return new Callback |
 | `.flat_map(fn)` | Chain with result unwrapping |
 | `.all(cbs)` | Execute list of callbacks in parallel |
