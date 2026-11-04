@@ -53,7 +53,7 @@ Or copy `tiny_callback.py` into your project. One file.
 ### Callback (Promise Pattern)
 
 ```python
-from tiny_callback import Callback, sleep
+from tiny_callback import Callback
 
 # Sync chain
 result = (
